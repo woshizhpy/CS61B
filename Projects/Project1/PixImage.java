@@ -45,6 +45,20 @@ public class PixImage {
 	this.height=height;
 	Pixel_Value= new short[width][height][total];
   }
+  /* public PixImage(PixImage img)
+  {
+	  width=img.width;
+	  height=img.height;
+	  for(int x=0;x<width;x++)
+	  {
+		  for(int y=0;y<height;y++)
+		  {
+			  Pixel_Value[x][y][0]=img.Pixel_Value[x][y][0];
+			  Pixel_Value[x][y][0]=img.Pixel_Value[x][y][1];
+			  Pixel_Value[x][y][0]=img.Pixel_Value[x][y][2];
+		  }
+	  }
+  }  */ 
   public PixImage()
   {
 	  width=0;
@@ -359,17 +373,28 @@ public class PixImage {
   public PixImage boxBlur(int numIterations) {
     // Replace the following line with your solution.
     //return this;
-	 PixImage BlurImg=new PixImage(this.width,this.height);
+	PixImage BlurImg=BlurforOnce();
+	for(int k=1;k<numIterations;k++)
+	{
+		BlurImg=BlurImg.BlurforOnce();
+	}
+	return BlurImg;
+	 
+  }
+  public PixImage BlurforOnce()
+  {
+	  PixImage BlurImg=new PixImage(this.width,this.height);
 	 // boxBlur for red 
-	 int i,j,k;
-	 for(i=0;i<BlurImg.width;i++) {
-		 for(j=0;j<BlurImg.height;j++) {
-			 
-			BlurImg.Pixel_Value[i][j][0]=this.PixelNebr_Avg(i,j,0);
-			BlurImg.Pixel_Value[i][j][1]=this.PixelNebr_Avg(i,j,1);
-			BlurImg.Pixel_Value[i][j][2]=this.PixelNebr_Avg(i,j,2);
+	 int i,j;
+	 
+		 for(i=0;i<BlurImg.width;i++) {
+			 for(j=0;j<BlurImg.height;j++) {
+				 
+				BlurImg.Pixel_Value[i][j][0]=PixelNebr_Avg(i,j,0);
+				BlurImg.Pixel_Value[i][j][1]=PixelNebr_Avg(i,j,1);
+				BlurImg.Pixel_Value[i][j][2]=PixelNebr_Avg(i,j,2);
+			 }
 		 }
-	 }
     return BlurImg;	 
   }
 
@@ -519,11 +544,15 @@ public class PixImage {
     doTest(image1.getWidth() == 3 && image1.getHeight() == 3,"Incorrect image width and height.");
 
      System.out.println("Testing blurring on a 3x3 image.");
+	 
     doTest(image1.boxBlur(1).equals(
            array2PixImage(new int[][] { { 40, 108, 155 },
                                         { 81, 137, 187 },
                                         { 120, 164, 218 } })),
            "Incorrect box blur (1 rep):\n" + image1.boxBlur(1));
+	//doTest(image1.boxBlur(1).equals(
+    //       image2),"Notequal" + image1.boxBlur(1));
+    //System.out.println("#################################%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");		   
     doTest(image1.boxBlur(2).equals(
            array2PixImage(new int[][] { { 91, 118, 146 },
                                         { 108, 134, 161 },
