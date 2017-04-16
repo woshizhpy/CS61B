@@ -16,6 +16,7 @@
  */
 import java.lang.*;
 
+
 public class PixImage {
 
   /**
@@ -168,22 +169,50 @@ public class PixImage {
   public String ColortoString(int color)
   {
 	  String s=new String("\r\n-----");
-	  for(int k=0;k<height;k++)
+	  for(int k=0;k<this.height;k++)
 	  {
 		  s+="----";
 	  }
 	  s+="\r\n";
-	  for(int j=0;j<height;j++)
+	  for(int j=0;j<this.height;j++)
 	  {
-		  for(int i=0;i<width;i++)
+		  for(int i=0;i<this.width;i++)
 		  {
-			  s+="| "+Short.toString(Pixel_Value[i][j][color]);
+			  System.out.println("x="+i+" j="+j);
+			  s+="| "+Short.toString(this.Pixel_Value[i][j][color]);
 			  
 		  }
 		  s+="|\r\n";
 	  }
 	  s+="-----";
-	  for(int k=0;k<height;k++)
+	  for(int k=0;k<this.height;k++)
+	  {
+		  s+="----";
+	  }
+	  s+="\r\n";
+	  return s;
+  }
+  public String MatrixtoString(int color,short[][][] Pixel_Value1)
+  {
+	  String s=new String("\r\n-----");
+	  int Mwidth=Pixel_Value1.length;
+	  int Mheight=Pixel_Value1[0].length;
+	  for(int k=0;k<Mheight;k++)
+	  {
+		  s+="----";
+	  }
+	  s+="\r\n";
+	  for(int j=0;j<Mheight;j++)
+	  {
+		  for(int i=0;i<Mwidth;i++)
+		  {
+			  s+="| "+Short.toString(Pixel_Value1[i][j][color]);
+			  
+		  }
+		  s+="|\r\n";
+	  }
+	  s+="-----";
+	  for(int k=0;k<Mheight;k++)
 	  {
 		  s+="----";
 	  }
@@ -317,15 +346,7 @@ public class PixImage {
 				}
 			}
 			break;
-		/* case 42:// the right up corner
-			sum=(short)(Pixel_Value[x][y-1][color]+Pixel_Value[x][y][color]+Pixel_Value[x+1][y-1][color]+Pixel_Value[x+1][y][color]);
-			break;
-		case 43:// the left down corner
-			sum=(short)(Pixel_Value[x][y][color]+Pixel_Value[x][y+1][color]+Pixel_Value[x-1][y][color]+Pixel_Value[x-1][y+1][color]);
-			break;
-		case 44:
-			sum=(short)(Pixel_Value[x][y][color]+Pixel_Value[x-1][y-1][color]+Pixel_Value[x][y-1][color]+Pixel_Value[x-1][y][color]);
-			break; */
+		
 		case 6://at sides Pixel_Type[1]=1 :left or right,Pixel_Type=2: up or down; Pixel_Type[2] is the start of coordinate with a range of 2
 			if(PixelType[1]==1)
 			{
@@ -438,11 +459,148 @@ public class PixImage {
    * @return a grayscale PixImage representing the edges of the input image.
    * Whiter pixels represent stronger edges.
    */
+  public short[][][] extend_Pixel()
+  {
+	 
+	short[][][] Larger_Matrix=new short [width+2][height+2][total];
+	  for(int x=1;x<width+1;x++)
+	  {
+		  for(int y=1;y<height+1;y++)
+		  {    System.out.println("x="+x+" y="+y+"height+1="+(height+1));
+			   Larger_Matrix[x][y][0]=Pixel_Value[x-1][y-1][0];
+			   Larger_Matrix[x][y][1]=Pixel_Value[x-1][y-1][1];
+			   Larger_Matrix[x][y][2]=Pixel_Value[x-1][y-1][2];
+		  }
+	  }
+	  for(int i=0;i<3;i++)
+	  {
+			Larger_Matrix[0][0][i]=Pixel_Value[0][0][i];
+			Larger_Matrix[0][height+1][i]=Pixel_Value[0][height-1][i];
+			Larger_Matrix[width+1][0][i]=Pixel_Value[width-1][0][i];
+			Larger_Matrix[width+1][height+1][i]=Pixel_Value[width-1][height-1][i];
+	  }
+	  for(int x=1;x<width+1;x++)
+	  {
+		  for(int i=0;i<3;i++) {
+			  Larger_Matrix[x][0][i]=Larger_Matrix[x][1][i];
+			  Larger_Matrix[x][height+1][i]=Larger_Matrix[x][height][i];
+			  
+		  }
+		   
+	  }
+	  for(int y=1;y<height+1;y++)
+	  {
+		  for(int i=0;i<3;i++) {
+			  Larger_Matrix[0][y][i]=Larger_Matrix[1][y][i];
+			  Larger_Matrix[width+1][y][i]=Larger_Matrix[width][y][i];
+			  //Larger_Matrix[width][y][i]=Pixel_Value[width-1][y-1][i];
+			  
+		  }   
+	  }  
+	  System.out.print(MatrixtoString(0,Larger_Matrix));
+	  System.out.print("return!");
+	  return Larger_Matrix;
+  }
   public PixImage sobelEdges() {
     // Replace the following line with your solution.
-    return this;
+	PixImage SolbelImg=new PixImage(this.width,this.height);
+	//short[][][] Larger_Matrix=extend_Pixel();
+	short[][][] Larger_Matrix=new short [width+2][height+2][total];
+	  for(int x=1;x<this.width+1;x++)
+	  {
+		  for(int y=1;y<this.height+1;y++)
+		  {    System.out.println("x="+x+" y="+y+"height+1="+(height+1));
+			   Larger_Matrix[x][y][0]=Pixel_Value[x-1][y-1][0];
+			   Larger_Matrix[x][y][1]=Pixel_Value[x-1][y-1][1];
+			   Larger_Matrix[x][y][2]=Pixel_Value[x-1][y-1][2];
+		  }
+	  }
+	  for(int i=0;i<3;i++)
+	  {
+			Larger_Matrix[0][0][i]=Pixel_Value[0][0][i];
+			Larger_Matrix[0][this.height+1][i]=Pixel_Value[0][this.height-1][i];
+			Larger_Matrix[this.width+1][0][i]=Pixel_Value[this.width-1][0][i];
+			Larger_Matrix[this.width+1][this.height+1][i]=Pixel_Value[this.width-1][this.height-1][i];
+	  }
+	  for(int x=1;x<this.width+1;x++)
+	  {
+		  for(int i=0;i<3;i++) {
+			  Larger_Matrix[x][0][i]=Larger_Matrix[x][1][i];
+			  Larger_Matrix[x][this.height+1][i]=Larger_Matrix[x][this.height][i];
+			  
+		  }
+		   
+	  }
+	  for(int y=1;y<this.height+1;y++)
+	  {
+		  for(int i=0;i<3;i++) {
+			  Larger_Matrix[0][y][i]=Larger_Matrix[1][y][i];
+			  Larger_Matrix[this.width+1][y][i]=Larger_Matrix[this.width][y][i];
+			  //Larger_Matrix[width][y][i]=Pixel_Value[width-1][y-1][i];
+			  
+		  }   
+	  }  
+	
+	  System.out.print(MatrixtoString(0,Larger_Matrix));
+	 for(int x=0;x<SolbelImg.width;x++)
+	{
+		for(int y=0;y<SolbelImg.height;y++)
+		{
+			SolbelImg.Pixel_Value[x][y][0]=this.Pixel_edgeSobel(x,y,Larger_Matrix);
+			SolbelImg.Pixel_Value[x][y][1]=this.Pixel_edgeSobel(x,y,Larger_Matrix);
+			SolbelImg.Pixel_Value[x][y][2]=this.Pixel_edgeSobel(x,y,Larger_Matrix);
+			
+		}
+	}
+	  
+    return SolbelImg; 
+	//return this;
     // Don't forget to use the method mag2gray() above to convert energies to
     // pixel intensities.
+  }
+  
+  public short[][] Getg(int x,int y,short[][][] LargerMatrix)
+  {
+	  short[][] g={{0,0},{0,0},{0,0}};
+	  short[][] fliter_x={{1,2,1},{0,0,0},{-1,-2,-1}};
+	  short[][] fliter_y={{1,0,-1},{2,0,-2},{1,0,-1}};
+	  for(int i=0;i<fliter_x.length;i++)
+	  {
+		  for(int j=0;j<fliter_x[0].length;j++)
+		  {
+			  for(int k=0;k<3;k++)
+			  {
+				g[k][0]+=fliter_x[i][j]*LargerMatrix[x+i][y+j][k];  //g[0] for red; g[*][0] for x;  
+			  }
+			
+		  }
+	  }
+	  for(int i=0;i<fliter_y.length;i++)
+	  {
+		  for(int j=0;j<fliter_y[0].length;j++)
+		  {
+			for(int k=0;k<3;k++)
+			{
+				g[k][1]+=fliter_y[i][j]*LargerMatrix[x+i][y+j][k];
+			}				
+		  }
+	  }
+	  //g[0]=(short)(LargerMatrix[x][y][color]-LargerMatrix[x+2][y][color]+2*LargerMatrix[x][y+1][color]-2*LargerMatrix[x+2][y+1][color]+LargerMatrix[x][y+2][color]-LargerMatrix[x+2][y+2][color]);
+	  return g;
+  }
+  public short Pixel_edgeSobel(int x,int y,short[][][]LargerMatrix)
+  {
+	  long energy=(long)0;
+	  short[][] g=Getg(x,y,LargerMatrix);
+	  for(int i=0;i<3;i++)
+	  {
+		  for(int j=0;j<2;j++)
+		  {
+			  energy+=(long)(g[i][j]*g[i][j]);
+		  }
+	  }
+	  
+	  return mag2gray(energy);
   }
 
 
@@ -523,17 +681,27 @@ public class PixImage {
    * main() runs a series of tests to ensure that the convolutions (box blur
    * and Sobel) are correct.
    */
+   public static void Matrixshow(short[][] filter_x)
+   {
+		int width=filter_x.length;
+		int height=filter_x[0].length;
+		String s1="\r\n----------------------------------------------"+"\r\n";
+		for(int x=0;x<height;x++)
+		{
+			for(int y=0;y<width;y++)
+			{
+				s1+="|"+Short.toString(filter_x[y][x]);
+			}
+			s1+="\r\n";
+		}
+		System.out.print(s1);
+   }
   public static void main(String[] args) {
 	  String s="I love you"+"\r\n"+"But I love other people as well\r\n";
 	  System.out.print(s);
     // Be forwarned that when you write arrays directly in Java as below,
     // each "row" of text is a column of your image--the numbers get
     // transposed.
-	final int total=3; 
-	int width=3,height=3;
-    short[][][] Pixel_Value= new short[width][height][total];
-	Pixel_Value[0][0][0]=(short) 10;
-	System.out.println(Pixel_Value[0][0][0]);
 	
     PixImage image1 = array2PixImage(new int[][] { { 0, 10, 240 },
                                                    { 30, 120, 250 },
@@ -563,11 +731,22 @@ public class PixImage {
            image1.boxBlur(2) + image1.boxBlur(1).boxBlur(1));
 
     System.out.println("Testing edge detection on a 3x3 image.");
-    /* doTest(image1.sobelEdges().equals(
+	System.out.print(image1);
+	System.out.print(image1.sobelEdges());
+	//int a=0;
+	//short b=1;
+	//a=b;
+	//short[][] filter_x={{1,2,1},{0,0,0},{-1,-2,-1}};
+	
+	
+	  //System.out.print();
+	
+	
+      doTest(image1.sobelEdges().equals(
            array2PixImage(new int[][] { { 104, 189, 180 },
                                         { 160, 193, 157 },
                                         { 166, 178, 96 } })),
-           "Incorrect Sobel:\n" + image1.sobelEdges());
+           "Incorrect Sobel:\n" + image1.sobelEdges()); 
 
 
     PixImage image2 = array2PixImage(new int[][] { { 0, 100, 100 },
@@ -588,6 +767,6 @@ public class PixImage {
     doTest(image2.sobelEdges().equals(
            array2PixImage(new int[][] { { 122, 143, 74 },
                                         { 74, 143, 122 } })),
-           "Incorrect Sobel:\n" + image2.sobelEdges()); */
+           "Incorrect Sobel:\n" + image2.sobelEdges());
   } 
 }
