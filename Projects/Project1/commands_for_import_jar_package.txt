@@ -1,0 +1,7 @@
+Commands to read a *.tiff Image to Blur and Sobel it states as follows:
+1.Compile:
+ javac -Djava.ext.dirs=lib *.java
+2.Run
+ (1)java -Djava.ext.dirs=lib Blur Imagename.tiff 3 // 3 is the Blur_times
+ (2)java -Djava.ext.dirs=lib Sobel Imagename.tiff 3 //(3 is optional: Blur times before Sobel)
+ 

@@ -178,7 +178,7 @@ public class PixImage {
 	  {
 		  for(int i=0;i<this.width;i++)
 		  {
-			  System.out.println("x="+i+" j="+j);
+			  //System.out.println("x="+i+" j="+j);
 			  s+="| "+Short.toString(this.Pixel_Value[i][j][color]);
 			  
 		  }
@@ -497,8 +497,8 @@ public class PixImage {
 			  
 		  }   
 	  }  
-	  System.out.print(MatrixtoString(0,Larger_Matrix));
-	  System.out.print("return!");
+	  //System.out.print(MatrixtoString(0,Larger_Matrix));
+	  //System.out.print("return!");
 	  return Larger_Matrix;
   }
   public PixImage sobelEdges() {
@@ -509,7 +509,7 @@ public class PixImage {
 	  for(int x=1;x<this.width+1;x++)
 	  {
 		  for(int y=1;y<this.height+1;y++)
-		  {    System.out.println("x="+x+" y="+y+"height+1="+(height+1));
+		  {    //System.out.println("x="+x+" y="+y+"height+1="+(height+1));
 			   Larger_Matrix[x][y][0]=Pixel_Value[x-1][y-1][0];
 			   Larger_Matrix[x][y][1]=Pixel_Value[x-1][y-1][1];
 			   Larger_Matrix[x][y][2]=Pixel_Value[x-1][y-1][2];
@@ -541,7 +541,7 @@ public class PixImage {
 		  }   
 	  }  
 	
-	  System.out.print(MatrixtoString(0,Larger_Matrix));
+	  //System.out.print(MatrixtoString(0,Larger_Matrix));
 	 for(int x=0;x<SolbelImg.width;x++)
 	{
 		for(int y=0;y<SolbelImg.height;y++)

@@ -29,7 +29,10 @@ public class RunLengthEncoding implements Iterable {
    *  Define any variables associated with a RunLengthEncoding object here.
    *  These variables MUST be private.
    */
-
+	private Run runHead;
+	private Run runTail;
+	private int size;
+	
 
 
 
@@ -48,6 +51,9 @@ public class RunLengthEncoding implements Iterable {
 
   public RunLengthEncoding(int width, int height) {
     // Your solution here.
+	runhead=new Run(0,width*height);
+	runTail=runHead;
+	size=1;
   }
 
   /**
