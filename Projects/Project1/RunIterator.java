@@ -37,8 +37,10 @@ public class RunIterator implements Iterator {
    *  These variables MUST be private.
    */
 
-
-
+	private int current;
+	//private int size;
+	private RList Rl;
+	private RNode cnode;
 
   /**
    *  RunIterator() constructs a new iterator starting with a specified run.
@@ -54,8 +56,13 @@ public class RunIterator implements Iterator {
   // constructor that you want so that your RunLengthEncoding.iterator()
   // implementation can construct a RunIterator that points to the first run of
   // the encoding.
-  RunIterator() {
+  RunIterator(RList l1) {
     // Your solution here.  You may add parameters to the method signature.
+	 current=0;
+	 Rl=l1;
+	 cnode=l1.head;
+	 
+	 //size=super.size;
   }
 
   /**
@@ -66,7 +73,12 @@ public class RunIterator implements Iterator {
    */
   public boolean hasNext() {
     // Replace the following line with your solution.
-    return false;
+    //return false;
+	 if(current>=Rl.size)
+	 {
+		 return false;
+	 }
+	 return true;
   }
 
   /**
@@ -94,9 +106,13 @@ public class RunIterator implements Iterator {
     // Construct a new array of 4 ints, fill in its values, and return it.
     // Don't forget to advance the RunIterator's pointer so that the next
     // call to next() will return the subsequent run.
-
+	int[] array=new int[] {cnode.times[0],cnode.item[0],cnode.item[1],cnode.item[2]};
+	cnode=cnode.next;
+	current++;
+	return array;
+	
     // Replace the following line with your solution.
-    return new int[4];
+    
   }
 
   /**

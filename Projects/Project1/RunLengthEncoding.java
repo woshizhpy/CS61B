@@ -29,10 +29,12 @@ public class RunLengthEncoding implements Iterable {
    *  Define any variables associated with a RunLengthEncoding object here.
    *  These variables MUST be private.
    */
-	private Run runHead;
-	private Run runTail;
-	private int size;
-	
+   private int width;
+   private int height;
+   private RList RLEncols;
+   private int size;
+   //private RunIterator it;
+
 
 
 
@@ -51,9 +53,11 @@ public class RunLengthEncoding implements Iterable {
 
   public RunLengthEncoding(int width, int height) {
     // Your solution here.
-	runhead=new Run(0,width*height);
-	runTail=runHead;
-	size=1;
+	this.width=width;
+	this.height=height;
+	size=width*height;
+	//it.size=1;
+	RLEncols=new RList(new RNode(new int[]{0,0,0},new int[]{size,size,size}));
   }
 
   /**
@@ -80,6 +84,17 @@ public class RunLengthEncoding implements Iterable {
   public RunLengthEncoding(int width, int height, int[] red, int[] green,
                            int[] blue, int[] runLengths) {
     // Your solution here.
+	this.width=width;
+	this.height=height;
+	int l=red.length;
+	//it.size=l;
+	size=width*height;
+	RLEncols=new RList(new RNode(red[0],green[0],blue[0],runLengths[0],runLengths[0],runLengths[0]));
+	for(int i=1;i<l;i++)
+	{
+		RLEncols.insertend(new RNode(red[i],green[i],blue[i],runLengths[i],runLengths[i],runLengths[i]));
+	}
+	
   }
 
   /**
@@ -91,7 +106,7 @@ public class RunLengthEncoding implements Iterable {
 
   public int getWidth() {
     // Replace the following line with your solution.
-    return 1;
+    return width;
   }
 
   /**
@@ -102,7 +117,7 @@ public class RunLengthEncoding implements Iterable {
    */
   public int getHeight() {
     // Replace the following line with your solution.
-    return 1;
+    return height;
   }
 
   /**
@@ -114,9 +129,11 @@ public class RunLengthEncoding implements Iterable {
    */
   public RunIterator iterator() {
     // Replace the following line with your solution.
-    return null;
+    //return null;
     // You'll want to construct a new RunIterator, but first you'll need to
     // write a constructor in the RunIterator class.
+	RunIterator it=new RunIterator(RLEncols);
+	return it;
   }
 
   /**
@@ -127,7 +144,35 @@ public class RunLengthEncoding implements Iterable {
    */
   public PixImage toPixImage() {
     // Replace the following line with your solution.
-    return new PixImage(1, 1);
+    //return new PixImage(1, 1);
+	PixImage img=new PixImage(width,height);
+	int x=0,y=0;
+	RunIterator it=iterator();
+	
+	while(it.hasNext())
+	{
+		int[] Imrnode=it.next();
+		//System.out.println(Imrnode[1]+","+Imrnode[0]);
+		for(int i=0;i<Imrnode[0];i++)
+		{
+			if(y<height)
+			{
+				img.setPixel(x,y,(short)Imrnode[1],(short)Imrnode[2],(short)Imrnode[3]);
+				y++;
+			}
+			else
+			{
+				y=y%height;
+				x++;
+				img.setPixel(x,y,(short)Imrnode[1],(short)Imrnode[2],(short)Imrnode[3]);
+				y++;
+			}
+		}
+		
+		
+	}
+	return img;
+	
   }
 
   /**
@@ -141,7 +186,9 @@ public class RunLengthEncoding implements Iterable {
    */
   public String toString() {
     // Replace the following line with your solution.
-    return "";
+	String s=new String("width:"+width+" height:"+height+"\r\n");
+	s+=RLEncols;
+    return s;
   }
 
 
@@ -162,6 +209,29 @@ public class RunLengthEncoding implements Iterable {
     // Your solution here, but you should probably leave the following line
     // at the end.
     check();
+	width=image.getWidth();
+	height=image.getHeight();
+	RLEncols=new RList();
+	int count=0;
+	short[] ins=new short[]{image.getRed(0,0),image.getGreen(0,0),image.getBlue(0,0)};
+	for(int x=0;x<width;x++)
+	{
+		for(int y=0;y<height;y++)
+		{
+			if(ins[0]==image.getRed(x,y))
+			{
+				count++;
+			}
+			else
+			{
+				RLEncols.insertend(new RNode((int)ins[0],(int)ins[1],(int)ins[2],count,count,count));
+				count=1;
+				ins=new short[]{image.getRed(x,y),image.getGreen(x,y),image.getBlue(x,y)};
+			}
+		}
+	}
+	RLEncols.insertend(new RNode((int)ins[0],(int)ins[1],(int)ins[2],count,count,count));
+	
   }
 
   /**
@@ -194,7 +264,61 @@ public class RunLengthEncoding implements Iterable {
   public void setPixel(int x, int y, short red, short green, short blue) {
     // Your solution here, but you should probably leave the following line
     //   at the end.
-    check();
+/* 	PixImage img1=this.toPixImage();
+	img1.setPixel(x,y,red,green,blue);
+	RunLengthEncoding l2=new RunLengthEncoding(img1);
+	this.RLEncols=l2.RLEncols;
+    check(); */
+	int location=x*height+y+1;
+	System.out.println("Location:"+location);
+	int count=0;
+	int current=0;
+	//RunIterator it=iterator();
+	RNode node=RLEncols.head;
+	while(current<RLEncols.size)
+	{
+		current++;
+		count+=node.times[0];
+		if(location<count)
+		{
+			if((node.item[0]!=(int)red)||(node.item[1]!=(int)green)||(node.item[2]!=(int)blue))
+			{
+				RNode Nnode1=new RNode((int) red,(int) green,(int) blue,1,1,1);
+				RNode Nnode2=new RNode(node.item[0],node.item[1],node.item[2],(count-location),(count-location),(count-location));
+				node.times=new int[] {(count-location-1),(count-location-1),(count-location-1)};
+				node.next.prev=Nnode2;
+				Nnode2.next=node.next;
+				Nnode2.prev=Nnode1;
+				Nnode1.next=Nnode2;
+				Nnode1.prev=node;
+				node.next=Nnode1;
+				System.out.println("count:"+count);
+				return;
+			}
+			else
+			{
+				System.out.println("count:"+count);
+				return;
+			}
+		}
+		else if(location==count)
+		{
+			if(node.times[0]==1)
+			{
+				System.out.println("count:"+count);
+				node.item=new int[]{(int) red,(int) green,(int) blue};
+				return;
+			}
+			else
+			{
+				System.out.println("count:"+count);
+				return;
+			}
+		}
+		node=node.next;
+		
+	}
+	
   }
 
 
@@ -264,7 +388,7 @@ public class RunLengthEncoding implements Iterable {
    * main() runs a series of tests of the run-length encoding code.
    */
   public static void main(String[] args) {
-    // Be forwarned that when you write arrays directly in Java as below,
+     // Be forwarned that when you write arrays directly in Java as below,
     // each "row" of text is a column of your image--the numbers get
     // transposed.
     PixImage image1 = array2PixImage(new int[][] { { 0, 3, 6 },
@@ -434,5 +558,6 @@ public class RunLengthEncoding implements Iterable {
     image4.setPixel(1, 0, (short) 1, (short) 1, (short) 1);
     doTest(rle4.toPixImage().equals(image4),
            "Setting RLE4[1][0] = 1 fails.");
+
   }
 }
